@@ -84,10 +84,22 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 15px;
 }
 
 .task-item:last-child {
     margin-bottom: 0;
+}
+
+.task-item.completed {
+    background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
+    border: 2px solid #4caf50;
+}
+
+.task-content {
+    display: flex;
+    align-items: center;
+    flex: 1;
 }
 
 @keyframes slideIn {
@@ -117,6 +129,41 @@ body {
     display: flex;
     gap: 15px;
     margin-bottom: 30px;
+}
+
+.stats {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+    justify-content: center;
+}
+
+.stat-item {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 15px 25px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    flex: 1;
+    justify-content: center;
+}
+
+.stat-icon {
+    font-size: 1.5em;
+}
+
+.stat-label {
+    color: #666;
+    font-size: 0.9em;
+}
+
+.stat-value {
+    color: #333;
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-left: 5px;
 }
 
 button {
@@ -158,6 +205,44 @@ button {
 
 .btn-secondary:active {
     transform: translateY(0);
+}
+
+.complete-btn {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    color: white;
+    padding: 10px 20px;
+    font-size: 0.95em;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    box-shadow: 0 2px 8px rgba(17, 153, 142, 0.3);
+    flex: 0 0 auto;
+}
+
+.complete-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(17, 153, 142, 0.5);
+}
+
+.complete-btn:active {
+    transform: translateY(0);
+}
+
+.complete-btn:disabled {
+    background: linear-gradient(135deg, #a8e6cf 0%, #88d8b0 100%);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.btn-icon {
+    font-size: 1.1em;
+    font-weight: bold;
 }
 
 .history {
@@ -213,4 +298,17 @@ button {
 
 #history-list::-webkit-scrollbar-thumb:hover {
     background: #764ba2;
+}
+
+/* 庆祝动画 */
+@keyframes celebrate {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
 }

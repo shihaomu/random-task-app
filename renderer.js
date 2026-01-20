@@ -58,53 +58,86 @@ const allTasks = [
     ...taskDatabase.life
 ];
 
+// 从 localStorage 加载统计数据
+let completedCount = parseInt(localStorage.getItem('completedCount')) || 0;
+let totalCount = parseInt(localStorage.getItem('totalCount')) || 0;
+
+// 更新统计显示
+function updateStats() {
+    document.getElementById('completed-count').textContent = completedCount;
+    document.getElementById('total-count').textContent = totalCount;
+}
+
+// 保存统计数据到 localStorage
+function saveStats() {
+    localStorage.setItem('completedCount', completedCount);
+    localStorage.setItem('totalCount', totalCount);
+}
+
 // 随机选择一个任务
 function getRandomTask() {
     const randomIndex = Math.floor(Math.random() * allTasks.length);
     return allTasks[randomIndex];
 }
 
-// 随机选择多个任务（不重复）
-function getRandomMultipleTasks(count) {
-    const shuffled = [...allTasks].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, Math.min(count, allTasks.length));
+// 显示任务
+function displayTask(task) {
+    const taskContainer = document.getElementById('task-container');
+    const taskId = Date.now();
+
+    taskContainer.innerHTML = `
+        <div class="task-item" data-task-id="${taskId}">
+            <div class="task-content">
+                <span class="task-emoji">${task.emoji}</span>
+                <span class="task-text">${task.text}</span>
+            </div>
+            <button class="complete-btn" onclick="completeTask(${taskId})">
+                <span class="btn-icon">✓</span>
+                <span class="btn-text">完成</span>
+            </button>
+        </div>
+    `;
+
+    // 增加总计计数
+    totalCount++;
+    updateStats();
+    saveStats();
 }
 
-// 显示任务
-function displayTasks(tasks) {
-    const taskContainer = document.getElementById('task-container');
+// 完成任务
+function completeTask(taskId) {
+    const taskItem = document.querySelector(`[data-task-id="${taskId}"]`);
+    if (taskItem && !taskItem.classList.contains('completed')) {
+        taskItem.classList.add('completed');
 
-    if (tasks.length === 1) {
-        const task = tasks[0];
-        taskContainer.innerHTML = `
-            <div class="task-item">
-                <span class="task-emoji">${task.emoji}</span>
-                <span class="task-text">${task.text}</span>
-            </div>
-        `;
-    } else {
-        taskContainer.innerHTML = tasks.map(task => `
-            <div class="task-item">
-                <span class="task-emoji">${task.emoji}</span>
-                <span class="task-text">${task.text}</span>
-            </div>
-        `).join('');
+        // 禁用完成按钮
+        const completeBtn = taskItem.querySelector('.complete-btn');
+        completeBtn.disabled = true;
+        completeBtn.innerHTML = '<span class="btn-icon">✓</span><span class="btn-text">已完成</span>';
+
+        // 增加完成计数
+        completedCount++;
+        updateStats();
+        saveStats();
+
+        // 添加庆祝动画效果
+        taskItem.style.animation = 'none';
+        taskItem.offsetHeight; // 触发重排
+        taskItem.style.animation = 'celebrate 0.6s ease-out';
     }
 }
 
 // 添加到历史记录
-function addToHistory(tasks) {
+function addToHistory(task, completed = false) {
     const historyList = document.getElementById('history-list');
     const timestamp = new Date().toLocaleTimeString('zh-CN', {
         hour: '2-digit',
         minute: '2-digit'
     });
 
-    tasks.forEach(task => {
-        const li = document.createElement('li');
-        li.innerHTML = `<span>[${timestamp}] ${task.emoji} ${task.text}</span>`;
-        historyList.insertBefore(li, historyList.firstChild);
-    });
+    const li = document.createElement('li');
+    li.innerHTML = `<span>[${timestamp}] ${task.emoji} ${task.text} ${completed ? '✅' : ''}</span>`;
+    historyList.insertBefore(li, historyList.firstChild);
 
     // 限制历史记录数量
     while (historyList.children.length > 20) {
@@ -115,14 +148,8 @@ function addToHistory(tasks) {
 // 按钮事件监听
 document.getElementById('generate-btn').addEventListener('click', () => {
     const task = getRandomTask();
-    displayTasks([task]);
-    addToHistory([task]);
-});
-
-document.getElementById('generate-multiple-btn').addEventListener('click', () => {
-    const tasks = getRandomMultipleTasks(5);
-    displayTasks(tasks);
-    addToHistory(tasks);
+    displayTask(task);
+    addToHistory(task);
 });
 
 // 键盘快捷键
@@ -132,3 +159,6 @@ document.addEventListener('keydown', (e) => {
         document.getElementById('generate-btn').click();
     }
 });
+
+// 页面加载时初始化统计
+updateStats();
