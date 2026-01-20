@@ -10,7 +10,12 @@ const taskDatabase = {
         { emoji: "😴", text: "休息 10 分钟" },
         { emoji: "🏃", text: "做 20 个开合跳" },
         { emoji: "🌿", text: "打开窗户呼吸新鲜空气" },
-        { emoji: "🧘‍♀️", text: "冥想 5 分钟" }
+        { emoji: "🧘‍♀️", text: "冥想 5 分钟" },
+        { emoji: "💪", text: "做 10 个深蹲" },
+        { emoji: "🤾", text: "做 1 分钟平板支撑" },
+        { emoji: "🧴", text: "涂护手霜" },
+        { emoji: "🦷", text: "使用牙线清洁牙齿" },
+        { emoji: "🌅", text: "看一会儿日出或日落" }
     ],
     entertainment: [
         { emoji: "🎵", text: "听一首喜欢的歌" },
@@ -22,7 +27,12 @@ const taskDatabase = {
         { emoji: "📸", text: "拍一张照片" },
         { emoji: "🎬", text: "看一个电影预告片" },
         { emoji: "🎭", text: "看一个喜剧片段" },
-        { emoji: "🎪", text: "尝试一个简单的魔术" }
+        { emoji: "🎪", text: "尝试一个简单的魔术" },
+        { emoji: "🎸", text: "学习弹一个吉他和弦" },
+        { emoji: "🎲", text: "玩一个桌面游戏" },
+        { emoji: "🎺", text: "听一个播客节目" },
+        { emoji: "🎩", text: "看一个魔术表演视频" },
+        { emoji: "🎢", text: "玩一个益智游戏" }
     ],
     learning: [
         { emoji: "📖", text: "学习一个新单词" },
@@ -34,7 +44,12 @@ const taskDatabase = {
         { emoji: "🌍", text: "了解一个世界趣闻" },
         { emoji: "🎓", text: "观看一个教育视频" },
         { emoji: "💭", text: "思考一个创意点子" },
-        { emoji: "📊", text: "学习一个 Excel 小技巧" }
+        { emoji: "📊", text: "学习一个 Excel 小技巧" },
+        { emoji: "🧮", text: "心算一道数学题" },
+        { emoji: "🗺️", text: "在地图上找一个陌生国家" },
+        { emoji: "🔬", text: "了解一个科学原理" },
+        { emoji: "📜", text: "了解一个历史事件" },
+        { emoji: "🌐", text: "学习几句外语问候语" }
     ],
     life: [
         { emoji: "🧹", text: "整理一下桌面" },
@@ -46,7 +61,17 @@ const taskDatabase = {
         { emoji: "🍰", text: "做一个小零食" },
         { emoji: "🧥", text: "整理一件衣服" },
         { emoji: "💬", text: "和身边的人聊聊天" },
-        { emoji: "⭐", text: "写下三件感恩的事" }
+        { emoji: "⭐", text: "写下三件感恩的事" },
+        { emoji: "📦", text: "整理一个抽屉" },
+        { emoji: "🧤", text: "洗几件衣服" },
+        { emoji: "🛒", text: "列一个购物清单" },
+        { emoji: "📧", text: "清理邮件收件箱" },
+        { emoji: "🏠", text: "整理一个房间角落" },
+        { emoji: "🗑️", text: "扔掉三件不需要的东西" },
+        { emoji: "💰", text: "记录今天的开销" },
+        { emoji: "🔋", text: "给电子设备充电" },
+        { emoji: "🧽", text: "擦拭一张桌子" },
+        { emoji: "📋", text: "检查冰箱食材" }
     ]
 };
 
@@ -62,6 +87,9 @@ const allTasks = [
 let completedCount = parseInt(localStorage.getItem('completedCount')) || 0;
 let totalCount = parseInt(localStorage.getItem('totalCount')) || 0;
 
+// 记录最近生成的任务，避免重复（最近10个）
+let recentTasks = [];
+
 // 更新统计显示
 function updateStats() {
     document.getElementById('completed-count').textContent = completedCount;
@@ -74,10 +102,34 @@ function saveStats() {
     localStorage.setItem('totalCount', totalCount);
 }
 
-// 随机选择一个任务
+// 随机选择一个任务（避免重复最近生成的任务）
 function getRandomTask() {
-    const randomIndex = Math.floor(Math.random() * allTasks.length);
-    return allTasks[randomIndex];
+    // 过滤掉最近生成的任务
+    const availableTasks = allTasks.filter(task => {
+        return !recentTasks.some(recent =>
+            recent.emoji === task.emoji && recent.text === task.text
+        );
+    });
+
+    // 如果可用任务列表为空（所有任务都在最近列表中），则清空最近记录
+    if (availableTasks.length === 0) {
+        recentTasks = [];
+        return getRandomTask(); // 递归调用重新获取
+    }
+
+    // 从可用任务中随机选择一个
+    const randomIndex = Math.floor(Math.random() * availableTasks.length);
+    const selectedTask = availableTasks[randomIndex];
+
+    // 将选中的任务添加到最近列表
+    recentTasks.push(selectedTask);
+
+    // 保持最近列表最多记录 10 个任务
+    if (recentTasks.length > 10) {
+        recentTasks.shift();
+    }
+
+    return selectedTask;
 }
 
 // 显示任务
