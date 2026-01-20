@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>随机任务生成器</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎲 随机任务生成器</h1>
+            <p class="subtitle">点击按钮，获取今天的随机任务！</p>
+        </div>
+
+        <div class="task-display">
+            <div id="task-container">
+                <p class="placeholder">点击下方按钮生成任务</p>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="generate-btn" class="btn-primary">
+                ✨ 生成任务
+            </button>
+            <button id="generate-multiple-btn" class="btn-secondary">
+                🎯 生成 5 个任务
+            </button>
+        </div>
+
+        <div class="history">
+            <h3>📋 任务历史</h3>
+            <ul id="history-list"></ul>
+        </div>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+</html>

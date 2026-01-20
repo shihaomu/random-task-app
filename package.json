@@ -1,0 +1,16 @@
+{
+  "name": "random-task-app",
+  "version": "1.0.0",
+  "description": "随机任务生成器桌面应用",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev"
+  },
+  "keywords": ["electron", "random", "tasks"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.0.0"
+  }
+}
