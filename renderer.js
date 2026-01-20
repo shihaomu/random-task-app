@@ -91,7 +91,7 @@ function displayTask(task) {
                 <span class="task-emoji">${task.emoji}</span>
                 <span class="task-text">${task.text}</span>
             </div>
-            <button class="complete-btn" onclick="completeTask(${taskId})">
+            <button class="complete-btn" onclick="completeTask(${taskId}, ${JSON.stringify(task).replace(/"/g, '&quot;')})">
                 <span class="btn-icon">✓</span>
                 <span class="btn-text">完成</span>
             </button>
@@ -105,7 +105,7 @@ function displayTask(task) {
 }
 
 // 完成任务
-function completeTask(taskId) {
+function completeTask(taskId, task) {
     const taskItem = document.querySelector(`[data-task-id="${taskId}"]`);
     if (taskItem && !taskItem.classList.contains('completed')) {
         taskItem.classList.add('completed');
@@ -120,6 +120,9 @@ function completeTask(taskId) {
         updateStats();
         saveStats();
 
+        // 添加到历史记录
+        addToHistory(task);
+
         // 添加庆祝动画效果
         taskItem.style.animation = 'none';
         taskItem.offsetHeight; // 触发重排
@@ -128,15 +131,24 @@ function completeTask(taskId) {
 }
 
 // 添加到历史记录
-function addToHistory(task, completed = false) {
+function addToHistory(task) {
     const historyList = document.getElementById('history-list');
-    const timestamp = new Date().toLocaleTimeString('zh-CN', {
+    const now = new Date();
+
+    // 格式化日期和时间
+    const date = now.toLocaleDateString('zh-CN', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    });
+    const time = now.toLocaleTimeString('zh-CN', {
         hour: '2-digit',
-        minute: '2-digit'
+        minute: '2-digit',
+        second: '2-digit'
     });
 
     const li = document.createElement('li');
-    li.innerHTML = `<span>[${timestamp}] ${task.emoji} ${task.text} ${completed ? '✅' : ''}</span>`;
+    li.innerHTML = `<span>[${date} ${time}] ${task.emoji} ${task.text} ✅</span>`;
     historyList.insertBefore(li, historyList.firstChild);
 
     // 限制历史记录数量
@@ -149,7 +161,6 @@ function addToHistory(task, completed = false) {
 document.getElementById('generate-btn').addEventListener('click', () => {
     const task = getRandomTask();
     displayTask(task);
-    addToHistory(task);
 });
 
 // 键盘快捷键
